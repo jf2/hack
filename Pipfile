@@ -1,0 +1,38 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+google-api-python-client = "*"
+pycrypto = "*"
+earthengine-api = "*"
+"oauth2client" = "*"
+tensorflow = "==1.10.0"
+numpy = "==1.14.5"
+scipy = "*"
+matplotlib = "<3"
+seaborn = "*"
+ipython = "*"
+scikit-learn = "*"
+jinja2 = "*"
+sqlalchemy = "*"
+cherrypy = "*"
+requests = "*"
+pandas = "*"
+dataset = "*"
+tablib = "*"
+opencv-python = "*"
+googlemaps = "*"
+
+
+[dev-packages]
+
+
+
+[requires]
+
+python_version = "3.6"

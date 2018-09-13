@@ -1,0 +1,5 @@
+sql:
+  user: sample_user
+  password: sample_passwor
+
+data_path: data
