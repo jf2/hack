@@ -9,4 +9,6 @@ install:
   - ./google-cloud-sdk/install.sh --quiet
 
 script:
+  - echo $SERICE_ACCOUNT_KEY_FILE > svc_keyfile.json
+  - gcloud auth activate-service-account --key-file=svc_keyfile.json
   - ./build_and_deploy.sh $PROJECT_ID
