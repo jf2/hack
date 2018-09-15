@@ -5,10 +5,16 @@
 
 PROJECT_ID=$1
 
-if [ -z "$1"]; then
+if [ -z "$1" ]; then
     echo "Usage: $0 PROJECT_ID"
     exit -1
 fi
+
+set -e
+
+GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
+
+echo $GIT_COMMIT_HASH > commit_hash.txt
 
 docker build . -t gcr.io/${PROJECT_ID}/hack-zurich:latest
 gcloud docker -- push gcr.io/${PROJECT_ID}/hack-zurich:latest

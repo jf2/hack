@@ -11,5 +11,6 @@ COPY run.py /
 COPY config.yaml /
 COPY app /app
 COPY credentials /root/.config/earthengine/credentials
+COPY commit_hash.txt /
 
 CMD python run.py
