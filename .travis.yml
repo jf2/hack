@@ -3,9 +3,10 @@ sudo: required
 services:
   - docker
 
-before
-script:
+install:
   - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-211.0.0-linux-x86_64.tar.gz
   - tar zxvf google-cloud-sdk-*.tar.gz google-cloud-sdk
   - ./google-cloud-sdk/install.sh
+  
+script:
   - ./build_and_deploy.sh $PROJECT_ID
