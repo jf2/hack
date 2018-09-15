@@ -1,16 +1,12 @@
 from risks.core import Risk, RiskType
 from risks.specializations import *
+from risks.utilities import *
 
-def meanOfAll():
+def meanOfAll(lon, lat, radius):
     """ get mean of all available risk factors """
 
     mean = 0
     count = 0
-
-    # todo remove hardcoding
-    lon = 116.2621
-    lat = 39.8412
-    radius = 0.2
 
     for risk_type in RiskType:
         if risk_type is not RiskType.INVALID:
@@ -22,8 +18,7 @@ def meanOfAll():
 
     mean /= count
 
-    print("Risk mean value is: ")
-    print(mean)
+    print("Risk mean value is:", mean)
 
 def get_risk_score_by_type(risk_type, lon, lat, radius):
     risk_special = risk_factory(risk_type)
@@ -31,8 +26,9 @@ def get_risk_score_by_type(risk_type, lon, lat, radius):
 
 if __name__ == '__main__':
     """ entry point for testing """
-    print("started")
-    meanOfAll()
-    #print("fire risk is", get_risk_score_by_type(RiskType.FIRE, 6.123, 7.123, 1000))
-    #print("flooding risk is", get_risk_score_by_type(RiskType.FLOODING, 6.123, 7.123, 1000))
-    print("finished")
+    #print("started")
+    lon = 89
+    lat = 22
+    radius = 0.2
+    meanOfAll(lon, lat, radius)
+    #print("finished")

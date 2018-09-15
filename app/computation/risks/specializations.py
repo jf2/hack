@@ -1,7 +1,7 @@
 from risks.core import Risk, RiskType
+from risks.utilities import *
 import ee
 import numpy as np
-#import matplotlib.pyplot as plt        
 
 def risk_factory(risk_type):
     """ factory to create risk specializations """
@@ -16,38 +16,28 @@ class RiskFire(Risk):
     risk_type = RiskType.FIRE
 
     def __init__(self):
-        self.startDate = '2015-01-01'
-        self.endDate = '2018-01-01'
+        self.start_date = '2015-01-01'
+        self.end_date = '2018-01-01'
+        self.dataset_name = 'FIRMS'
+        self.dataset_band_name = 'T21'
+        self.range_min = 300
+        self.range_max = 510
         
         # get band of image collection
         ee.Initialize()
-        self.image_collection = ee.ImageCollection('FIRMS').\
-        filter(ee.Filter.date(self.startDate, self.endDate)).select('T21')
+        self.image_collection = ee.ImageCollection(self.dataset_name).\
+            filter(ee.Filter.date(self.start_date, self.end_date)).\
+            select(self.dataset_band_name)
 
     def get_risk_score(self, lon, lat, radius):
 
-        # Make an Array Image, with a 1-D Array per pixel.
+        self.nparray = image_coll_to_np_array(self.image_collection, 
+            lon, lat, radius)
 
-        self.geometry = ee.Geometry.Rectangle([
-            lon - radius, 
-            lat - radius, 
-            lon + radius, 
-            lat + radius])
+        self.nparray = map_linearly_from(self.nparray, 
+            self.range_min, self.range_max)
 
-        # reduce to image reduce to region of image
-        self.img_reduced = self.image_collection.reduce(ee.Reducer.mean()).reduceRegion(
-            reducer=ee.Reducer.toList(),
-            geometry=self.geometry,
-            scale=1000)
-
-        # convert to np array
-        self.array = ee.Array(self.img_reduced.toArray())
-        self.nparray = np.array(self.array.getInfo())
-
-        #print("array shape:", self.array.length())
-        print("nparray shape:", self.nparray.shape)
-
-        return 0.5
+        return np.mean(self.nparray)
 
 class RiskFlooding(Risk):
     """ Flooding risk """
@@ -55,13 +45,27 @@ class RiskFlooding(Risk):
     risk_type = RiskType.FIRE
 
     def __init__(self):
-        self.startDate = '2007-01-01'
-        self.endDate = '2018-01-01'
+        self.start_date = '2007-01-01'
+        self.end_date = '2018-01-01'
+        self.dataset_name = 'MODIS/006/MOD44W'
+        self.dataset_band_name = 'water_mask'
+        self.range_min = 0.0
+        self.range_max = 1.0
         
-        # get iamge
+        # get band of image collection
         ee.Initialize()
-        # todo
-
+        self.image_collection = ee.ImageCollection(self.dataset_name).\
+            filter(ee.Filter.date(self.start_date, self.end_date)).\
+            select(self.dataset_band_name)
 
     def get_risk_score(self, lon, lat, radius):
-        return 3.5
+
+        self.nparray = image_coll_to_np_array(self.image_collection, 
+            lon, lat, radius)
+
+        #print("shape")
+        #print(self.nparray.shape)
+        #print("entries")
+        #print(self.nparray)
+
+        return np.mean(self.nparray)
