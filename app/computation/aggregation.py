@@ -6,9 +6,11 @@ def meanOfAll():
 
     mean = 0
     count = 0
-    lon = 0.0
-    lat = 0.0
-    radius = 0
+
+    # todo remove hardcoding
+    lon = 116.2621
+    lat = 39.8412
+    radius = 0.2
 
     for risk_type in RiskType:
         if risk_type is not RiskType.INVALID:
