@@ -2,4 +2,7 @@ sql:
   user: sample_user
   password: sample_passwor
 
+google_maps:
+  api_key:
+
 data_path: data

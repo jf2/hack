@@ -19,6 +19,7 @@ seaborn = "*"
 ipython = "*"
 scikit-learn = "*"
 jinja2 = "*"
+flask = "*"
 sqlalchemy = "*"
 cherrypy = "*"
 requests = "*"
@@ -27,6 +28,7 @@ dataset = "*"
 tablib = "*"
 opencv-python = "*"
 googlemaps = "*"
+nodeenv = "*"
 
 
 [dev-packages]
