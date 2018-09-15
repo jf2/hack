@@ -11,6 +11,7 @@ if [ -z "$1" ]; then
 fi
 
 set -e
+set -x
 
 GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
 
