@@ -18,7 +18,7 @@ matplotlib = "<3"
 seaborn = "*"
 ipython = "*"
 scikit-learn = "*"
-jinja2 = "*"
+"jinja2" = "*"
 sqlalchemy = "*"
 cherrypy = "*"
 requests = "*"
@@ -27,6 +27,7 @@ dataset = "*"
 tablib = "*"
 opencv-python = "*"
 googlemaps = "*"
+flask = "*"
 
 
 [dev-packages]
