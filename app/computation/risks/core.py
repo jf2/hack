@@ -10,12 +10,17 @@ class RiskType(Enum):
 class Risk:
     """ A risk """
 
+    # general
     severity = -1
-
     risk_type = RiskType.INVALID
-    rangeMin = 0
-    rangeMax = 1
+    range_min = 0
+    range_max = 1
+
+    # region of interest
     value = -1
 
     def __init__(self, risk_type):
         self.risk_type = risk_type
+
+    #def getRiskScore(self, long, lat, radius):
+    #    return -1
