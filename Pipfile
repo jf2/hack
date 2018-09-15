@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 google-api-python-client = "*"
 pycrypto = "*"
 earthengine-api = "*"
@@ -28,10 +25,7 @@ tablib = "*"
 opencv-python = "*"
 googlemaps = "*"
 
-
 [dev-packages]
-
-
 
 [requires]
 
