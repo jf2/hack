@@ -4,8 +4,6 @@ services:
   - docker
 
 install:
-  - echo $SERVICE_ACCOUNT_KEY_FILE > svc.json
-  - cat svc.json
   - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-211.0.0-linux-x86_64.tar.gz
   - tar zxvf google-cloud-sdk-*.tar.gz google-cloud-sdk
   - ./google-cloud-sdk/install.sh --quiet
