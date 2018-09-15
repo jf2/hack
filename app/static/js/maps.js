@@ -1,13 +1,10 @@
-var googleMap;
 function initMap(init_lat, init_lng) {
-    googleMap = new google.maps.Map(document.getElementById('map'), {
+    var map = new google.maps.Map(document.getElementById('map'), {
       center: {lat: init_lat, lng: init_lng},
       zoom: 7,
       mapTypeId: 'roadmap',
       mapTypeControl: false,
     });
-
-    var map = googleMap;
 
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
@@ -59,4 +56,29 @@ function initMap(init_lat, init_lng) {
       });
       map.fitBounds(bounds);
     });
+    return map;
+}
+
+function setEarthEngineImage(map, mapid, token) {
+    const eeMapOptions = {
+        getTileUrl: (tile, zoom) => {
+            const baseUrl = 'https://earthengine.googleapis.com/map';
+            const url = [baseUrl, mapid, zoom, tile.x, tile.y].join('/');
+            return `${url}?token=${token}`;
+        },
+        tileSize: new google.maps.Size(256, 256)
+    };
+    const mapType = new google.maps.ImageMapType(eeMapOptions);
+    map.overlayMapTypes.push(mapType);
+}
+
+
+function heatmapOnDragend(map) {
+    map.addListener('dragend', function() {
+      (function($) {
+          $.getJSON("/simple_riskmap/heatmap", function(data){
+            setEarthEngineImage(map, data["mapid"], data["tokenid"])
+          })
+      })(jQuery);
+  });
 }
