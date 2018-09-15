@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block body %}
 
+{% include 'navi.html' %}
+
 <div class="form-group row mt-4">
     <label for="pac-input">Visualize the risk in the area and study the risk factors.</label>
     <input type="text" class="form-control" id="pac-input" aria-describedby="emailHelp"
            placeholder="Enter location">
 </div>
 
-<div id="map" class="row" style="height: 50vh"></div>
+<div id="map" class="row" style="height: 60vh"></div>
 <div class="row col-md-12 pt-3 btn-group-toggle" data-toggle="buttons">
     <label class="btn btn-outline-success active">
         <input type="checkbox" name="options" id="option1" autocomplete="off" checked> Fire
@@ -24,7 +26,18 @@
 </div>
 
 <script>
-  var map = initMap(47.500954, 9.129869); // Sets googleMap variable.
-  heatmapOnDragend(map);
+  var map_dict = initMap(8); // Sets googleMap variable.
+  var map = map_dict['map'];
+  var geocod;
+  geocod = new google.maps.Geocoder();
+  var res = geocod.geocode({"address": "Switzerland"}, function(results, status) {
+      console.log(status);
+      map.setCenter(results[0].geometry.location);
+  });
+  console.log("Geocod", geocod);
+  console.log("Result", res);
+  $.getJSON("/simple_riskmap/heatmap", function(data){
+      setEarthEngineOverlay(map, data["mapid"], data["token"], 1.00)}
+  )
 </script>
 {% endblock %}

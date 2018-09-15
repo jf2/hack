@@ -15,13 +15,19 @@ def record_params(setup_state):
 
 @simple_riskmap.route("/")
 def index():
-    return fl.render_template("map.html")
+    return fl.render_template("small_map.html")
 
+@simple_riskmap.route("/big")
+def big():
+    return fl.render_template("big_map.html")
 
-@simple_riskmap.route("/heatmap")
-def heatmap():
+@simple_riskmap.route("/landsat")
+def landsat():
     landsat1999 = ee.Image('LANDSAT/LE7_TOA_5YEAR/1999_2003')
-    ndvi1999 = landsat1999.select('B4').subtract(landsat1999.select('B3')).divide(landsat1999.select('B4').add(landsat1999.select('B3')));
+    ndvi1999 = landsat1999.select('B4').\
+        subtract(landsat1999.select('B3')).\
+        divide(landsat1999.select('B4').
+               add(landsat1999.select('B3')))
 
     img_data = ndvi1999.getMapId()
     return fl.jsonify({
@@ -29,8 +35,8 @@ def heatmap():
         "token": img_data["token"]
     })
 
-@simple_riskmap.route("/test_heatmap")
-def test_heatmap(start_date=None, end_date=None):
+@simple_riskmap.route("/heatmap")
+def heatmap(start_date=None, end_date=None):
     end_date = dt.date.today() if end_date is None else dt.datetime.strptime(end_date, "%Y-%m-%d").date()
     if start_date is None:
         start_date = dt.datetime(year=end_date.year - simple_riskmap.config["riskmap"]["default_lookback_years"],
@@ -42,6 +48,9 @@ def test_heatmap(start_date=None, end_date=None):
         filterDate(start_date.isoformat(), end_date.isoformat()).\
         select('T21')
     mean = collection.reduce(ee.Reducer.mean())
-    data = mean .getMapId()
+    data = mean.getMapId(vis_params={"min": 325.0, "max": 400.0, "palette": ['red', 'orange', 'yellow']})
 
-    return fl.render_template("test_map.html", mapid=data["mapid"], token=data["token"])
+    return fl.jsonify({
+        "mapid": data["mapid"],
+        "token": data["token"]
+    })
