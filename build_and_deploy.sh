@@ -13,6 +13,8 @@ fi
 docker build . -t gcr.io/${PROJECT_ID}/hack-zurich:latest
 gcloud docker -- push gcr.io/${PROJECT_ID}/hack-zurich:latest
 
+gcloud container clusters get-credentials hello-world-cluster
+
 kubectl delete deployment/hello-web
 kubectl run hello-web --image=gcr.io/${PROJECT_ID}/hack-zurich:latest --port 5000
 
