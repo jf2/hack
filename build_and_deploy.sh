@@ -17,8 +17,8 @@ GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
 
 echo $GIT_COMMIT_HASH > commit_hash.txt
 
-#docker build . -t gcr.io/${PROJECT_ID}/hack-zurich:latest
-#gcloud docker -- push gcr.io/${PROJECT_ID}/hack-zurich:latest
+docker build . -t gcr.io/${PROJECT_ID}/hack-zurich:latest
+gcloud docker -- push gcr.io/${PROJECT_ID}/hack-zurich:latest
 
 gcloud config set project $PROJECT_ID
 gcloud config set compute/zone europe-west2-b
