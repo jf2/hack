@@ -4,11 +4,14 @@ services:
   - docker
 
 install:
+  - echo $SERVICE_ACCOUNT_KEY_FILE > svc.json
+  - cat svc.json
   - wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-211.0.0-linux-x86_64.tar.gz
   - tar zxvf google-cloud-sdk-*.tar.gz google-cloud-sdk
   - ./google-cloud-sdk/install.sh --quiet
 
 script:
-  - echo $SERICE_ACCOUNT_KEY_FILE > svc_keyfile.json
+  - echo $SERVICE_ACCOUNT_KEY_FILE > svc_keyfile.json
   - gcloud auth activate-service-account --key-file=svc_keyfile.json
+  - gcloud components install kubectl
   - ./build_and_deploy.sh $PROJECT_ID
