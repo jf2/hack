@@ -14,8 +14,11 @@
     <script src="{{url_for('static', filename='js/maps.js')}}"></script>
 
     <div class="container">
+        <div class="text-center">
+            <img src="{{ url_for('static', filename = 'logo.png') }}" height="150"/>
+        </div>
+        <div class="text-right">{{ config.commit_hash }}</div>
         <div class="row">
-        <h1>MundoRisk {{ config.commit_hash }}</h1>
             <nav class="navbar navbar-expand-lg navbar-light bg-light col-md-12">
               <span class="navbar-brand">Tools</span>
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"

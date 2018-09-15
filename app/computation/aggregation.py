@@ -2,7 +2,7 @@ from risks.core import Risk, RiskType
 from risks.specializations import *
 from risks.utilities import *
 
-def meanOfAll(lon, lat, radius):
+def calculate_mean_of_all(lon, lat, radius):
     """ get mean of all available risk factors """
 
     mean = 0
@@ -26,9 +26,12 @@ def get_risk_score_by_type(risk_type, lon, lat, radius):
 
 if __name__ == '__main__':
     """ entry point for testing """
-    #print("started")
+
+    # longitute in degrees
     lon = 89
+    # latitude in degrees
     lat = 22
+    # radius in degrees
     radius = 0.2
-    meanOfAll(lon, lat, radius)
-    #print("finished")
+
+    calculate_mean_of_all(lon, lat, radius)
