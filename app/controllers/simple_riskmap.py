@@ -2,7 +2,7 @@ import flask as fl
 import ee
 import datetime as dt
 import random
-from app.computation.z_score import z_score
+from app.computation.transform import z_score, unit, mean
 
 
 simple_riskmap = fl.Blueprint('simple_riskmap', __name__, url_prefix="/simple_riskmap")
@@ -40,8 +40,8 @@ def landsat():
 def heatmap():
     start_date = fl.request.args.get('start_date', None)
     end_date = fl.request.args.get('end_date', None)
-    fire = fl.request.args.get("fire", None)
-    drought = fl.request.args.get("drought", None)
+    fire = bool(int(fl.request.args.get("fire", None)))
+    drought = bool(int(fl.request.args.get("drought", None)))
 
     end_date = dt.date.today() if end_date is None else dt.datetime.strptime(end_date, "%Y-%m-%d").date()
     if start_date is None:
@@ -50,9 +50,10 @@ def heatmap():
     else:
         start_date = dt.datetime.strptime(start_date, "%Y-%m-%d").date()
 
-    fire_collection = ee.ImageCollection("FIRMS").\
+    fire_collection = ee.ImageCollection("NOAA/GFS0P25").\
         filterDate(start_date.isoformat(), end_date.isoformat()).\
-        select('T21')
+        select("temperature_2m_above_ground")
+
     drought_collection = ee.ImageCollection('IDAHO_EPSCOR/TERRACLIMATE'). \
         filterDate(start_date.isoformat(), end_date.isoformat()).\
         select("pdsi")
@@ -60,20 +61,25 @@ def heatmap():
     weight = ee.Image(0.5)
     zero = ee.Image(0.)
 
-    z_fire = z_score(fire_collection)
-    z_drought = z_score(drought_collection)
+    m_fire = mean(fire_collection)
+    m_drought = mean(drought_collection)
+
+    unit_fire = unit(m_fire)
+    unit_drought = unit(m_drought)
 
     print(drought, fire)
     if drought and fire:
-        img = z_fire.multiply(weight).add(z_drought.multiply(weight))
+        img = unit_fire.multiply(weight).add(unit_drought.multiply(weight))
     if drought and not fire:
-        img = z_drought
+        img = unit_drought
     if not drought and fire:
-        img = z_fire
+        img = unit_fire
     if not drought and not fire:
         img = zero
 
-    data = img.getMapId(vis_params={"min": -2, "max": +2, "palette": ['LightYellow', 'LightSalmon', 'FireBrick']})
+    img = unit(img)
+
+    data = img.getMapId(vis_params={"min": 0, "max": +1, "palette": ['LightYellow', 'LightSalmon', 'FireBrick']})
 
     return fl.jsonify({
         "mapid": data["mapid"],
@@ -90,15 +96,16 @@ def nonreduced_heatmap(start_date=None, end_date=None):
     else:
         start_date = dt.datetime.strptime(start_date, "%Y-%m-%d").date()
 
-    fire_collection = ee.ImageCollection("FIRMS").\
+    fire_collection = ee.ImageCollection("NOAA/GFS0P25").\
         filterDate(start_date.isoformat(), end_date.isoformat()).\
-        select('T21')
-    drought = ee.ImageCollection('IDAHO_EPSCOR/TERRACLIMATE'). \
+        select("temperature_2m_above_ground")
+
+    drought_collection = ee.ImageCollection('IDAHO_EPSCOR/TERRACLIMATE'). \
         filterDate(start_date.isoformat(), end_date.isoformat()).\
         select("pdsi")
 
     fire = z_score(fire_collection)
-    drought = z_score(drought)
+    drought = z_score(drought_collection)
 
     datas = [fire.getMapId(vis_params={"min": -2, "max": +2, "palette": ['red', 'orange', 'yellow']}),
              drought.getMapId(vis_params={"min": -2, "max": +2, "palette": ['aqua', 'teal', 'blue']})]
