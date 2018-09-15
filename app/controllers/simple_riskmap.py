@@ -37,8 +37,12 @@ def landsat():
     })
 
 @simple_riskmap.route("/heatmap")
-def heatmap(start_date=None, end_date=None,
-            drought=False, fire=False):
+def heatmap():
+    start_date = fl.request.args.get('start_date', None)
+    end_date = fl.request.args.get('end_date', None)
+    fire = fl.request.args.get("fire", None)
+    drought = fl.request.args.get("drought", None)
+
     end_date = dt.date.today() if end_date is None else dt.datetime.strptime(end_date, "%Y-%m-%d").date()
     if start_date is None:
         start_date = dt.datetime(year=end_date.year - simple_riskmap.config["riskmap"]["default_lookback_years"],
@@ -49,22 +53,23 @@ def heatmap(start_date=None, end_date=None,
     fire_collection = ee.ImageCollection("FIRMS").\
         filterDate(start_date.isoformat(), end_date.isoformat()).\
         select('T21')
-    drought = ee.ImageCollection('IDAHO_EPSCOR/TERRACLIMATE'). \
+    drought_collection = ee.ImageCollection('IDAHO_EPSCOR/TERRACLIMATE'). \
         filterDate(start_date.isoformat(), end_date.isoformat()).\
         select("pdsi")
 
     weight = ee.Image(0.5)
     zero = ee.Image(0.)
 
-    fire = z_score(fire_collection)
-    drought = z_score(drought)
+    z_fire = z_score(fire_collection)
+    z_drought = z_score(drought_collection)
 
+    print(drought, fire)
     if drought and fire:
-        img = fire.multiply(weight).add(drought.multiply(weight))
+        img = z_fire.multiply(weight).add(z_drought.multiply(weight))
     if drought and not fire:
-        img = drought
+        img = z_drought
     if not drought and fire:
-        img = fire
+        img = z_fire
     if not drought and not fire:
         img = zero
 
