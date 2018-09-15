@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="form-group row mt-4">
+    <label for="pac-input">Visualize the risk in the area and study the risk factors.</label>
+    <input type="text" class="form-control" id="pac-input" aria-describedby="emailHelp"
+           placeholder="Enter location">
+</div>
+
+<div id="map" class="row" style="height: 50vh"></div>
+<div class="row col-md-12 pt-3 btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-outline-success active">
+        <input type="checkbox" name="options" id="option1" autocomplete="off" checked> Fire
+    </label>
+    <label class="btn btn-outline-success active">
+        <input type="checkbox" name="options" id="option2" autocomplete="off" checked> Flood
+    </label>
+    <label class="btn btn-outline-success active">
+        <input type="checkbox" name="options" id="option3" autocomplete="off" checked> Avalanche
+    </label>
+    <label class="btn btn-outline-success active">
+        <input type="checkbox" name="options" id="option4" autocomplete="off" checked> Earthquake
+    </label>
+</div>
+
+<script>
+  initMap(47.500954, 9.129869); // Sets googleMap variable.
+  googleMap.addListener('dragend', function() {
+      (function($) {
+          $.getJSON("/simple_riskmap/heatmap", function(data){
+              const eeMapOptions = {
+                  getTileUrl: (tile, zoom) => {
+                      const baseUrl = 'https://earthengine.googleapis.com/map';
+                      const url = [baseUrl, data["mapid"], zoom, tile.x, tile.y].join('/');
+                      return `${url}?token=${data["token"]}`;
+                  },
+                  tileSize: new google.maps.Size(256, 256)
+              };
+              const mapType = new google.maps.ImageMapType(eeMapOptions);
+              googleMap.overlayMapTypes.push(mapType);
+          })
+      })(jQuery);
+  });
+</script>
+{% endblock %}
