@@ -26,7 +26,7 @@
 
   console.log("Geocod", geocod);
   $.getJSON("/simple_riskmap/heatmap?fire=1&drought=1", function(data){
-      addEarthEngineOverlay(map, data["mapid"], data["token"], 0.5)
+      addEarthEngineOverlay(map, data["mapid"], data["token"], 1.0)
   });
   $('input[type=checkbox]').on('change', function() {
       var fire = Number($("#fire").is(":checked")) ? 1 : 0;
@@ -34,7 +34,7 @@
       map.overlayMapTypes.clear();
       $.getJSON("/simple_riskmap/heatmap?fire="+fire+"&"+"drought=" + drought,
           function(data){
-              addEarthEngineOverlay(map, data["mapid"], data["token"], 0.5)
+              addEarthEngineOverlay(map, data["mapid"], data["token"], 1.0)
           })
 
   });
