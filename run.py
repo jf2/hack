@@ -15,4 +15,4 @@ if __name__ == "__main__":
     for blueprint in __blueprints__:
         app.register_blueprint(blueprint)
 
-    app.run()
+    app.run(host="0.0.0.0")
