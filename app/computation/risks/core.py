@@ -5,7 +5,7 @@ class RiskType(Enum):
     INVALID = 1
     FIRE = 2
     FLOODING = 3
-    EARTHQUAKE = 4
+    #EARTHQUAKE = 4
 
 class Risk:
     """ A risk """
@@ -22,5 +22,5 @@ class Risk:
     def __init__(self, risk_type):
         self.risk_type = risk_type
 
-    #def getRiskScore(self, long, lat, radius):
-    #    return -1
+    def get_risk_score(self, lon, lat, radius):
+        return -1
