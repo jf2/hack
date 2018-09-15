@@ -11,8 +11,12 @@ def index():
 
 @simple_riskmap.route("/heatmap")
 def heatmap():
-    img = ee.Image("srtm90_v4")
-    img_data = img.getMapId()
+    landsat1999 = ee.Image('LANDSAT/LE7_TOA_5YEAR/1999_2003');
+    landsat2008 = ee.Image('LANDSAT/LE7_TOA_5YEAR/2008_2012');
+
+    ndvi1999 = landsat1999.select('B4').subtract(landsat1999.select('B3')).divide(landsat1999.select('B4').add(landsat1999.select('B3')));
+
+    img_data = ndvi1999.getMapId()
     return fl.jsonify({
         "mapid": img_data["mapid"],
         "token": img_data["token"]
