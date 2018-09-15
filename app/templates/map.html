@@ -25,6 +25,21 @@
 
 <script>
   initMap(47.500954, 9.129869); // Sets googleMap variable.
-
+  googleMap.addListener('dragend', function() {
+      (function($) {
+          $.getJSON("/simple_riskmap/heatmap", function(data){
+              const eeMapOptions = {
+                  getTileUrl: (tile, zoom) => {
+                      const baseUrl = 'https://earthengine.googleapis.com/map';
+                      const url = [baseUrl, data["mapid"], zoom, tile.x, tile.y].join('/');
+                      return `${url}?token=${data["token"]}`;
+                  },
+                  tileSize: new google.maps.Size(256, 256)
+              };
+              const mapType = new google.maps.ImageMapType(eeMapOptions);
+              googleMap.overlayMapTypes.push(mapType);
+          })
+      })(jQuery);
+  });
 </script>
 {% endblock %}

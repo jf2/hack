@@ -1,10 +1,13 @@
 var googleMap;
 function initMap(init_lat, init_lng) {
-    map = new google.maps.Map(document.getElementById('map'), {
+    googleMap = new google.maps.Map(document.getElementById('map'), {
       center: {lat: init_lat, lng: init_lng},
       zoom: 7,
-      mapTypeId: 'roadmap'
+      mapTypeId: 'roadmap',
+      mapTypeControl: false,
     });
+
+    var map = googleMap;
 
     // Create the search box and link it to the UI element.
     var input = document.getElementById('pac-input');
@@ -56,5 +59,4 @@ function initMap(init_lat, init_lng) {
       });
       map.fitBounds(bounds);
     });
-    return map;
 }
