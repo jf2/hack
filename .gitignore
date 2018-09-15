@@ -321,3 +321,7 @@ pip-selfcheck.json
 
 
 # End of https://www.gitignore.io/api/c++,node,python,pycharm
+
+
+/credentials
+/commit_hash.txt
