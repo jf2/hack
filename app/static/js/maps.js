@@ -1,4 +1,4 @@
-function initMap(zoom_level) {
+function initMap(country, zoom_level) {
     var map = new google.maps.Map(document.getElementById('map'), {
         zoom: zoom_level,
         mapTypeId: 'roadmap',
@@ -6,6 +6,11 @@ function initMap(zoom_level) {
         mapTypeControlOptions: {
             mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain', 'mundo_style']
         }
+    });
+    var geocod = new google.maps.Geocoder();
+    geocod.geocode({"address": country}, function(results, status) {
+      console.log(status);
+      map.setCenter(results[0].geometry.location);
     });
 
     var style = new google.maps.StyledMapType([
@@ -94,17 +99,17 @@ function initMap(zoom_level) {
         map.fitBounds(bounds);
     });
 
-    return {'map': map}
+    return {'map': map, 'geocoder': geocod}
 }
 
-function setEarthEngineOverlay(map, mapid, token, opacity) {
+function addEarthEngineOverlay(map, mapid, token, opacity) {
     var overlay = new ee.MapLayerOverlay('https://earthengine.googleapis.com/map', mapid, token, {});
-    l = map.overlayMapTypes.push(overlay);
-    map.overlayMapTypes.getAt(l - 1).setOpacity(opacity)
+    overlay.setOpacity(opacity);
+    map.overlayMapTypes.push(overlay);
 }
 
 
-function setEarthEngineImage(map, mapid, token, opacity) {
+function addEarthEngineImage(map, mapid, token, opacity) {
     const eeMapOptions = {
         getTileUrl: (tile, zoom) => {
             const baseUrl = 'https://earthengine.googleapis.com/map';
@@ -113,9 +118,9 @@ function setEarthEngineImage(map, mapid, token, opacity) {
         },
         tileSize: new google.maps.Size(256, 256)
     };
-    const mapType = new google.maps.ImageMapType(eeMapOptions);
-    l = map.overlayMapTypes.push(mapType);
-    map.overlayMapTypes.getAt(l - 1).setOpacity(opacity);
+    var mapType = new google.maps.ImageMapType(eeMapOptions);
+    mapType.setOpacity(opacity);
+    map.overlayMapTypes.push(mapType);
 }
 
 

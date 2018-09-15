@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block body %}
+
+{% include 'navi.html' %}
+
+<div class="form-group row mt-4">
+    <label for="pac-input">Visualize the risk in the area and study the risk factors.</label>
+    <input type="text" class="form-control" id="pac-input" aria-describedby="emailHelp"
+           placeholder="Enter location">
+</div>
+
+<div id="map" class="row" style="height: 60vh"></div>
+<div class="row col-md-12 pt-3 btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-outline-success active">
+        <input type="checkbox" name="options" id="fire" autocomplete="off" checked> Fire
+    </label>
+    <label class="btn btn-outline-success active">
+        <input type="checkbox" name="options" id="drought" autocomplete="off" checked> Drought
+    </label>
+</div>
+
+<script>
+  var map_dict = initMap("Switzerland", 7); // Sets googleMap variable.
+  var map = map_dict['map'];
+  var geocod = map_dict['geocoder'];
+
+  console.log("Geocod", geocod);
+  $.getJSON("/simple_riskmap/nonreduced_heatmap?fire=1&drought=1",
+      function(datas){
+          datas.forEach(function(data){addEarthEngineOverlay(map, data["mapid"], data["token"], 1.00)});
+      });
+
+</script>
+{% endblock %}
