@@ -19,6 +19,10 @@ def record_params(setup_state):
 def index():
     return fl.render_template("map.html")
 
+@simple_riskmap.route("/scores")
+def scores():
+    return fl.render_template("scores_demo_only.html")
+
 @simple_riskmap.route("/nonreduced")
 def big():
     return fl.render_template("nonreduced_map.html")
