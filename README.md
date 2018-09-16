@@ -3,14 +3,21 @@
 ## Installation of dependencies
 
 Step 0:
-    If using Mac OS X and Python Framework install, run
-    $ /Applications/Python 3.6/Install Certificates.command
+If using Mac OS X and Python Framework install, run
+
+```
+$ /Applications/Python 3.6/Install Certificates.command
+```
 
 Step 1:
-    $ pipenv update
+```
+$ pipenv update
+```
 
 Step 2:
-    $ pipenv run nodeenv nenv
+```
+$ pipenv run nodeenv nenv
+```
 
 ## Launch
 ```
