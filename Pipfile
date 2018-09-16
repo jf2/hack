@@ -28,7 +28,7 @@ googlemaps = "*"
 nodeenv = "*"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
-
 python_version = "3.6"

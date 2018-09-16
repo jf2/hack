@@ -15,6 +15,25 @@
     <script src="{{url_for('static', filename='js/maps.js')}}"></script>
 
     <div class="container", style="width: 60vw">
+        <div class="text-center">
+            <img src="{{ url_for('static', filename = 'design/logo.png') }}" height="150"/>
+        </div>
+        <div class="text-right">{{ config.commit_hash }}</div>
+        <div class="row">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light col-md-12">
+              <span class="navbar-brand">Tools</span>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                  <a class="nav-item nav-link active" href="#">Map<span class="sr-only">(current)</span></a>
+                  <a class="nav-item nav-link" href="#">Advanced analytics</a>
+                </div>
+              </div>
+            </nav>
+        </div>
         {% block body %}
         {% endblock %}
     </div>
