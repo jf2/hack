@@ -9,8 +9,8 @@
 
 <div id="map" class="row" style="height: 60vh"></div>
 <div class="row col-md-12 pt-3 btn-group-toggle" data-toggle="buttons">
-    <label class="btn btn-outline-success active">
-        <input type="checkbox" name="options" id="fire" autocomplete="off" checked> Fire
+    <label class="btn btn-outline-success">
+        <input type="checkbox" name="options" id="wind" autocomplete="off"> Wind
     </label>
     <label class="btn btn-outline-success active">
         <input type="checkbox" name="options" id="drought" autocomplete="off" checked> Drought
@@ -22,16 +22,16 @@
   var map = map_dict['map'];
   var geocod = map_dict['geocoder'];
 
-  $.getJSON("/simple_riskmap/heatmap?fire=0&drought=1", function(data){
+  $.getJSON("/simple_riskmap/heatmap?wind=0&drought=1", function(data){
       addEarthEngineOverlay(map, data["mapid"], data["token"], 1.0)
   });
   $('input[type=checkbox]').on('change', function() {
-      var fire = Number($("#fire").is(":checked")) ? 1 : 0;
+      var wind = Number($("#wind").is(":checked")) ? 1 : 0;
       var drought = Number($("#drought").is(":checked")) ? 1 : 0;
       console.log("Before");
       console.log(map.overlayMapTypes.getAt(0));
       map.overlayMapTypes.clear();
-      $.getJSON("/simple_riskmap/heatmap?fire="+fire+"&"+"drought=" + drought,
+      $.getJSON("/simple_riskmap/heatmap?wind="+wind+"&"+"drought=" + drought,
           function(data){
               addEarthEngineOverlay(map, data["mapid"], data["token"], 1.0);
               console.log("After");

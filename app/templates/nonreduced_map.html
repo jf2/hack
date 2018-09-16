@@ -23,10 +23,21 @@
   var geocod = map_dict['geocoder'];
 
   console.log("Geocod", geocod);
-  $.getJSON("/simple_riskmap/nonreduced_heatmap?fire=1&drought=1",
-      function(datas){
-          datas.forEach(function(data){addEarthEngineOverlay(map, data["mapid"], data["token"], 1.00)});
-      });
+  google.maps.event.addListener(map, 'idle', function() {
+       var bounds =  map.getBounds();
+       console.log(bounds);
+       var ne = bounds.getNorthEast();
+       var sw = bounds.getSouthWest();
 
+       $.getJSON("/simple_riskmap/nonreduced_heatmap?fire=1&drought=1"+
+           "&ne_lng="+ne.lng() +
+           "&ne_lat="+ne.lat() +
+           "&sw_lng="+sw.lng() +
+           "&sw_lat="+sw.lat(),
+           function(datas){
+           datas.forEach(function(data){addEarthEngineOverlay(map, data["mapid"], data["token"], 1.00)});
+       });
+
+  });
 </script>
 {% endblock %}
