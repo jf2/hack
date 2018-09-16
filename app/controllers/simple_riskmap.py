@@ -3,6 +3,7 @@ import ee
 import datetime as dt
 import random
 from app.computation.transform import z_score, unit, mean
+from app.computation.cmap import balance
 
 
 simple_riskmap = fl.Blueprint('simple_riskmap', __name__, url_prefix="/simple_riskmap")
@@ -44,7 +45,7 @@ def landsat():
 def heatmap():
     start_date = fl.request.args.get('start_date', None)
     end_date = fl.request.args.get('end_date', None)
-    fire = bool(int(fl.request.args.get("fire", None)))
+    wind = bool(int(fl.request.args.get("wind", None)))
     drought = bool(int(fl.request.args.get("drought", None)))
 
     end_date = dt.date.today() if end_date is None else dt.datetime.strptime(end_date, "%Y-%m-%d").date()
@@ -54,36 +55,31 @@ def heatmap():
     else:
         start_date = dt.datetime.strptime(start_date, "%Y-%m-%d").date()
 
-    fire_collection = ee.ImageCollection("NOAA/GFS0P25").\
+    fix_drought = ee.Image(2000)
+    fix_wind = ee.Image(200)
+    fix_null = ee.Image(0.)
+
+    wind_collection = ee.ImageCollection('FIRMS'). \
         filterDate(start_date.isoformat(), end_date.isoformat()).\
-        select("temperature_2m_above_ground")
+        select("T21")
 
     drought_collection = ee.ImageCollection('IDAHO_EPSCOR/TERRACLIMATE'). \
         filterDate(start_date.isoformat(), end_date.isoformat()).\
         select("pdsi")
 
-    weight = ee.Image(0.5)
-    zero = ee.Image(0.)
+    m_wind = wind_collection.mean().unmask().divide(fix_wind)
+    m_drought = drought_collection.mean().divide(fix_drought)
 
-    m_fire = mean(fire_collection)
-    m_drought = mean(drought_collection)
+    if drought and wind:
+        m = m_drought.add(m_wind)
+    if drought and not wind:
+        m = m_drought
+    if not drought and wind:
+        m = m_wind
+    if not drought and not wind:
+        m = fix_null
 
-    unit_fire = unit(m_fire)
-    unit_drought = unit(m_drought)
-
-    print(drought, fire)
-    if drought and fire:
-        img = unit_fire.multiply(weight).add(unit_drought.multiply(weight))
-    if drought and not fire:
-        img = unit_drought
-    if not drought and fire:
-        img = unit_fire
-    if not drought and not fire:
-        img = zero
-
-    img = m_drought
-
-    data = img.getMapId(vis_params={"min": 0, "max": +1, "palette": ['Blue', 'FireBrick']})
+    data = m.getMapId({"palette": balance, "min": 0, "max": 1., "opacity": 0.75})
 
     return fl.jsonify({
         "mapid": data["mapid"],
@@ -92,26 +88,33 @@ def heatmap():
 
 
 @simple_riskmap.route("/nonreduced_heatmap")
-def nonreduced_heatmap(start_date=None, end_date=None):
-    end_date = dt.date.today() if end_date is None else dt.datetime.strptime(end_date, "%Y-%m-%d").date()
+def nonreduced_heatmap():
+    start_date = fl.request.args.get('start_date', None)
+    end_date = fl.request.args.get('end_date', None)
+
+    ne = (float(fl.request.args.get("ne_lng")), float(fl.request.args.get("ne_lat")))
+    sw = (float(fl.request.args.get("sw_lng")), float(fl.request.args.get("sw_lat")))
+
+    geom = ee.Geometry.Rectangle(ne[0], ne[1], sw[0], sw[1])
+    today = dt.date.today()
+    end_date = dt.date(year=today.year, month=today.month, day=today.day - 1) \
+        if end_date is None else dt.datetime.strptime(end_date, "%Y-%m-%d").date()
     if start_date is None:
         start_date = dt.datetime(year=end_date.year - simple_riskmap.config["riskmap"]["default_lookback_years"],
                                  day=end_date.day, month=end_date.month)
     else:
         start_date = dt.datetime.strptime(start_date, "%Y-%m-%d").date()
+    epsilon = ee.Image(1e-14)
 
     fire_collection = ee.ImageCollection("NOAA/GFS0P25").\
         filterDate(start_date.isoformat(), end_date.isoformat()).\
         select("temperature_2m_above_ground")
 
-    drought_collection = ee.ImageCollection('IDAHO_EPSCOR/TERRACLIMATE'). \
-        filterDate(start_date.isoformat(), end_date.isoformat()).\
-        select("pdsi")
+    fire_mean = fire_collection.mean()
+    fire = fire_mean.getMapId({"palette": balance, "min": -35, "max": 70, "opacity": 0.75})
 
-    fire = z_score(fire_collection)
-    drought = z_score(drought_collection)
+    return fl.jsonify([{"mapid": fire["mapid"], "token": fire["token"]}])
+    # datas = [fire.getMapId(vis_params={"min": -2, "max": +2, "palette": ['red', 'orange', 'yellow']}),
+    #          drought.getMapId(vis_params={"min": -2, "max": +2, "palette": ['aqua', 'teal', 'blue']})]
 
-    datas = [fire.getMapId(vis_params={"min": -2, "max": +2, "palette": ['red', 'orange', 'yellow']}),
-             drought.getMapId(vis_params={"min": -2, "max": +2, "palette": ['aqua', 'teal', 'blue']})]
-
-    return fl.jsonify([{"mapid": data["mapid"], "token": data["token"]} for data in datas])
+    # return fl.jsonify([{"mapid": data["mapid"], "token": data["token"]} for data in datas])
