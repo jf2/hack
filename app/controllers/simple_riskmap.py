@@ -77,9 +77,9 @@ def heatmap():
     if not drought and not fire:
         img = zero
 
-    img = unit(img)
+    img = m_drought
 
-    data = img.getMapId(vis_params={"min": 0, "max": +1, "palette": ['LightYellow', 'LightSalmon', 'FireBrick']})
+    data = img.getMapId(vis_params={"min": 0, "max": +1, "palette": ['Blue', 'FireBrick']})
 
     return fl.jsonify({
         "mapid": data["mapid"],
