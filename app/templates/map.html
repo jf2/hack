@@ -22,7 +22,6 @@
   var map = map_dict['map'];
   var geocod = map_dict['geocoder'];
 
-  console.log("Geocod", geocod);
   $.getJSON("/simple_riskmap/heatmap?fire=0&drought=1", function(data){
       addEarthEngineOverlay(map, data["mapid"], data["token"], 1.0)
   });
