@@ -5,7 +5,7 @@ sql:
 google_maps:
   api_key:
 
-riskmap:
-  default_lookback_years:
-
 data_path: data
+
+riskmap:
+  default_lookback_years: 10

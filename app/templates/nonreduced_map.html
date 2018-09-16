@@ -25,22 +25,10 @@
   var geocod = map_dict['geocoder'];
 
   console.log("Geocod", geocod);
-  $.getJSON("/simple_riskmap/heatmap?fire=0&drought=1", function(data){
-      addEarthEngineOverlay(map, data["mapid"], data["token"], 1.0)
-  });
-  $('input[type=checkbox]').on('change', function() {
-      var fire = Number($("#fire").is(":checked")) ? 1 : 0;
-      var drought = Number($("#drought").is(":checked")) ? 1 : 0;
-      console.log("Before");
-      console.log(map.overlayMapTypes.getAt(0));
-      map.overlayMapTypes.clear();
-      $.getJSON("/simple_riskmap/heatmap?fire="+fire+"&"+"drought=" + drought,
-          function(data){
-              addEarthEngineOverlay(map, data["mapid"], data["token"], 1.0);
-              console.log("After");
-              console.log(map.overlayMapTypes.getAt(0));
-      })
+  $.getJSON("/simple_riskmap/nonreduced_heatmap?fire=1&drought=1",
+      function(datas){
+          datas.forEach(function(data){addEarthEngineOverlay(map, data["mapid"], data["token"], 1.00)});
+      });
 
-  });
 </script>
 {% endblock %}
